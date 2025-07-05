@@ -1,0 +1,55 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from io import StringIO
+
+# Simulated CSV dataset (30 days of total cases)
+csv_data = """Date,Cases
+2024-06-05,44984101
+2024-06-06,44984220
+2024-06-07,44984302
+2024-06-08,44984377
+2024-06-09,44984445
+2024-06-10,44984520
+2024-06-11,44984594
+2024-06-12,44984670
+2024-06-13,44984738
+2024-06-14,44984805
+2024-06-15,44984877
+2024-06-16,44984945
+2024-06-17,44985013
+2024-06-18,44985090
+2024-06-19,44985155
+2024-06-20,44985220
+2024-06-21,44985295
+2024-06-22,44985370
+2024-06-23,44985445
+2024-06-24,44985510
+2024-06-25,44985585
+2024-06-26,44985655
+2024-06-27,44985730
+2024-06-28,44985800
+2024-06-29,44985875
+2024-06-30,44985945
+2024-07-01,44986015
+2024-07-02,44986080
+2024-07-03,44986155
+2024-07-04,44986225
+"""
+
+# Step 1: Read dataset from string
+df = pd.read_csv(StringIO(csv_data))
+
+# Step 2: Calculate daily new cases
+df["NewCases"] = df["Cases"].diff()
+df = df.dropna()
+
+# Step 3: Plotting daily new cases
+plt.figure(figsize=(12, 6))
+plt.bar(df["Date"], df["NewCases"], color='orange')
+plt.title("COVID-19 Daily New Cases in India (From Dataset)")
+plt.xlabel("Date")
+plt.ylabel("New Cases")
+plt.xticks(rotation=45)
+plt.grid(axis='y')
+plt.tight_layout()
+plt.show()
