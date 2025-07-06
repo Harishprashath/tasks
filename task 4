@@ -1,0 +1,74 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Sample dataset (you can load your own CSV instead)
+data = {
+    'label': ['ham', 'spam', 'ham', 'ham', 'spam'],
+    'message': [
+        "Hi, how are you?",
+        "Win a free iPhone now!!! Click here",
+        "Are we meeting tomorrow?",
+        "Let's grab lunch today",
+        "You've won $1000 cash prize. Claim now!"
+    ]
+}
+
+# Convert to DataFrame
+df = pd.DataFrame(data)
+
+# Encode labels (ham = 0, spam = 1)
+df['label'] = df['label'].map({'ham': 0, 'spam': 1})
+
+# Features and labels
+X = df['message']
+y = df['label']
+
+# Convert text to vectors
+vectorizer = CountVectorizer()
+X_vectorized = vectorizer.fit_transform(X)
+
+# Split data into train/test
+X_train, X_test, y_train, y_test = train_test_split(
+    X_vectorized, y, test_size=0.2, random_state=42
+)
+
+# Train model
+model = MultinomialNB()
+model.fit(X_train, y_train)
+
+# Predict
+y_pred = model.predict(X_test)
+
+# Evaluate
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+# Test a custom message
+test_message = ["Congratulations! You won a car. Reply to claim"]
+test_vec = vectorizer.transform(test_message)
+prediction = model.predict(test_vec)
+print("\nPrediction for test message:", "Spam" if prediction[0] else "Not Spam")
+
+output:
+Accuracy: 1.0
+
+Confusion Matrix:
+ [[1]]
+
+Classification Report:
+               precision    recall  f1-score   support
+
+           1       1.00      1.00      1.00         1
+
+    accuracy                           1.00         1
+   macro avg       1.00      1.00      1.00         1
+weighted avg       1.00      1.00      1.00         1
+
+
+Prediction for test message: Spam
+/usr/local/lib/python3.11/dist-packages/sklearn/metrics/_classification.py:407: UserWarning: A single label was found in 'y_true' and 'y_pred'. For the confusion matrix to have the correct shape, use the 'labels' parameter to pass all known labels.
+  warnings.warn(
